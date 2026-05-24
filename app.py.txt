@@ -1,15 +1,20 @@
 from flask import Flask, request
 import random
+import os
 
 app = Flask(__name__)
 
 @app.route("/", methods=["GET", "POST"])
 def home():
     result = ""
+    show_result = "none"
+
+    ig_link = "https://www.instagram.com/gambler_168"
 
     if request.method == "POST":
+        show_result = "block"
+
         try:
-            today = float(request.form["today"])
             current = int(request.form["current"])
             last1 = int(request.form["last1"])
             last2 = int(request.form["last2"])
@@ -18,83 +23,78 @@ def home():
             diff = abs(last1 - last2)
 
             if diff > 80:
-                risk = "高風險"
+                risk = "高波動（節奏不穩）"
             elif diff > 30:
-                risk = "中風險"
+                risk = "中波動"
             else:
-                risk = "低風險"
+                risk = "穩定節奏"
 
             if current > avg * 1.3:
-                status = "觸發醞釀尾段（接近啟動）"
-                base_score = 75
+                status = "進入尾段醞釀"
             elif current < avg * 0.7:
-                status = "釋放後整理期（節奏重建中）"
-                base_score = 40
+                status = "剛結束釋放"
             else:
-                status = "節奏轉折區（訊號累積中）"
-                base_score = 60
+                status = "訊號累積中"
 
-            score = base_score + (today - 100) * 0.2
-            score += random.randint(-5, 5)
-            score = max(0, min(100, int(score)))
+            signal_chance = random.randint(60, 95)
+            signal_text = f"✅ 成功捕捉熱點訊號（{signal_chance}%）"
 
-            center = avg - current
-            low = max(5, int(center - 10))
-            high = max(low + 5, int(center + 15))
-
-            if score > 70:
-                tag = "🔥 熱點區"
-                action = "🟢 建議可提前卡位（熱點接近）"
-                strategy = "🎰 低倍進場，卡觸發點"
-            elif score > 50:
-                tag = "⚡ 過渡熱區"
-                action = "🟡 訊號逐漸形成（可觀察）"
-                strategy = "🎯 小注測試節奏"
-            else:
-                tag = "❄️ 冷卻整理區"
-                action = "🟠 節奏整理中（觀察尾段）"
-                strategy = "💡 暫不建議重壓，可低倍觀察"
-
-            confidence = random.randint(72, 95)
+            def lock_block(text):
+                return f'''
+                <div onclick="window.location.href='{ig_link}'"
+                     style="background:#222;padding:15px;border-radius:15px;margin-top:15px;">
+                    🔒 {text}<br>
+                    <span style="color:orange;">點擊前往 IG 解鎖</span>
+                </div>
+                '''
 
             result = f"""
-            🤖 AI評分：{score}/100<br><br>
-            📊 節奏分析：{status}<br>
-            🏷 狀態區間：{tag}<br>
-            ⚠️ 風險等級：{risk}<br><br>
-            {action}<br>
-            {strategy}<br><br>
-            ⏳ 預測觸發：約 {low} ~ {high} 轉<br><br>
-            📈 信心指數：{confidence}%<br><br>
-            ⚠️ 熱點訊號存在時，通常不會維持太久<br>
-            💡 暫不建議重壓，可低倍觀察
+            <div class="card red">📊 分析結果如下</div>
+
+            <div class="card">{signal_text}</div>
+
+            <div class="card">
+                📊 節奏判定：{status}<br>
+                ⚠️ 波動狀態：{risk}
+            </div>
+
+            {lock_block("操作建議已鎖定")}
+            {lock_block("建議區間已鎖定")}
+
             """
 
         except:
-            result = "⚠️ 請輸入正確數字"
+            result = "<div class='card'>⚠️ 輸入錯誤</div>"
 
     return f"""
     <html>
-    <body style="background:#0b0f1a;color:white;text-align:center;font-family:sans-serif;">
-        
-        <h2 style="color:orange;">⚡ 熱點雷達</h2>
-        <p style="color:gray;">即時節奏分析｜捕捉潛在爆發點</p>
+    <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {{background:#0b0f1a;color:white;text-align:center;padding:20px;}}
+        input {{width:90%;padding:12px;margin:8px;border-radius:10px;border:none;background:#1c2233;color:white;}}
+        button {{width:95%;padding:15px;background:orange;border:none;border-radius:12px;}}
+        .card {{background:#151a2c;margin-top:15px;padding:15px;border-radius:15px;}}
+        .red {{background:#ff3b3b;}}
+    </style>
+    </head>
 
-        <form method="post">
-            今日得分率:<br><input name="today"><br><br>
-            未開轉數:<br><input name="current"><br><br>
-            上次轉數:<br><input name="last1"><br><br>
-            上上次:<br><input name="last2"><br><br>
+    <body>
 
-            <button style="padding:10px 20px;background:orange;border:none;">開始分析</button>
-        </form>
+    <h2>⚡ 熱點雷達</h2>
 
-        <div style="margin-top:20px;">
-            {result}
-        </div>
+    <form method="post">
+        <input name="current" placeholder="未開轉數">
+        <input name="last1" placeholder="上次轉數">
+        <input name="last2" placeholder="上上次">
+        <button>開始分析</button>
+    </form>
+
+    {result}
 
     </body>
     </html>
     """
 
-app.run(host="0.0.0.0", port=10000)
+port = int(os.environ.get("PORT", 10000))
+app.run(host="0.0.0.0", port=port)
