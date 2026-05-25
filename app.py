@@ -15,6 +15,8 @@ def home():
         show_result = "block"
 
         try:
+            # 👉 有讀取 today，但不顯示
+            today = request.form.get("today", "")
             current = int(request.form.get("current", 0))
             last1 = int(request.form.get("last1", 0))
             last2 = int(request.form.get("last2", 0))
@@ -22,7 +24,7 @@ def home():
             avg = (last1 + last2) / 2
             diff = abs(last1 - last2)
 
-            # 波動
+            # 波動判定
             if diff > 80:
                 risk = "高波動（節奏不穩）"
             elif diff > 30:
@@ -47,7 +49,7 @@ def home():
             signal_chance = random.randint(60, 95)
             confidence = random.randint(80, 96)
 
-            # 🔒 免費版鎖住區塊
+            # 🔒 免費版鎖區塊
             lock_html = f"""
             <a href="{IG_LINK}" target="_blank" style="text-decoration:none;">
                 <div class="card step highlight">
@@ -193,6 +195,7 @@ def home():
     <div style="font-size:12px;color:gray;">※ 本系統僅供參考</div>
 
     <form method="post">
+        <input name="today" placeholder="今日得分率">
         <input name="current" placeholder="未開轉數">
         <input name="last1" placeholder="上次轉數">
         <input name="last2" placeholder="上上次">
