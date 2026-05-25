@@ -86,11 +86,6 @@ def home():
                 </div>
 
                 <div class="card step small">
-                    ⚠️ 熱點訊號通常不會維持太久<br>
-                    💡 建議低倍觀察，避免重壓
-                </div>
-
-                <div class="card step small">
                     ※ 本系統僅供參考
                 </div>
 
