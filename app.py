@@ -85,10 +85,6 @@ def home():
                     🤖 AI信心指數：{confidence}%
                 </div>
 
-                <div class="card step small">
-                    ※ 本系統僅供參考
-                </div>
-
             </div>
             """
 
@@ -161,11 +157,6 @@ def home():
     .red {{
         background:#ff3b3b;
         font-weight:bold;
-    }}
-
-    .small {{
-        font-size:12px;
-        color:gray;
     }}
     </style>
 
