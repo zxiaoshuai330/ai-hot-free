@@ -11,7 +11,6 @@ def home():
     result = ""
     show_result = "none"
 
-    # 👉 預設值（避免第一次開是空）
     today = ""
     current = ""
     last1 = ""
@@ -21,13 +20,11 @@ def home():
         show_result = "block"
 
         try:
-            # 👉 先抓值（保留用）
             today = request.form.get("today", "")
             current = request.form.get("current", "")
             last1 = request.form.get("last1", "")
             last2 = request.form.get("last2", "")
 
-            # 👉 轉數字
             current_i = int(current)
             last1_i = int(last1)
             last2_i = int(last2)
@@ -52,7 +49,6 @@ def home():
             signal_chance = random.randint(60, 95)
             confidence = random.randint(80, 96)
 
-            # 🔒 免費版鎖
             lock_html = f"""
             <a href="{IG_LINK}" target="_blank" style="text-decoration:none; color:white;">
                 <div class="card step highlight">
@@ -91,7 +87,11 @@ def home():
 
                 <div class="card step small">
                     ⚠️ 熱點訊號通常不會維持太久<br>
-                    💡 建議低倍觀察
+                    💡 建議低倍觀察，避免重壓
+                </div>
+
+                <div class="card step small">
+                    ※ 本系統僅供參考
                 </div>
 
             </div>
@@ -191,7 +191,9 @@ def home():
     <body>
 
     <div class="title">⚡ 熱點雷達</div>
-    <div style="font-size:12px;color:gray;">※ 本系統僅供參考</div>
+    <div style="font-size:12px;color:gray;">
+        ※ 本系統為AI模型推估，結果僅供參考
+    </div>
 
     <form method="post">
         <input name="today" placeholder="今日得分率" value="{today}">
