@@ -11,17 +11,29 @@ def home():
     result = ""
     show_result = "none"
 
+    # 👉 預設值（避免第一次開是空）
+    today = ""
+    current = ""
+    last1 = ""
+    last2 = ""
+
     if request.method == "POST":
         show_result = "block"
 
         try:
+            # 👉 先抓值（保留用）
             today = request.form.get("today", "")
-            current = int(request.form.get("current", 0))
-            last1 = int(request.form.get("last1", 0))
-            last2 = int(request.form.get("last2", 0))
+            current = request.form.get("current", "")
+            last1 = request.form.get("last1", "")
+            last2 = request.form.get("last2", "")
 
-            avg = (last1 + last2) / 2
-            diff = abs(last1 - last2)
+            # 👉 轉數字
+            current_i = int(current)
+            last1_i = int(last1)
+            last2_i = int(last2)
+
+            avg = (last1_i + last2_i) / 2
+            diff = abs(last1_i - last2_i)
 
             if diff > 80:
                 risk = "高波動（節奏不穩）"
@@ -30,23 +42,17 @@ def home():
             else:
                 risk = "穩定節奏"
 
-            if current > avg * 1.3:
+            if current_i > avg * 1.3:
                 status = "進入尾段醞釀"
-                action = "建議低本測試"
-                range_text = f"{int(avg*0.8)} ~ {int(avg*1.2)} 轉"
-            elif current < avg * 0.7:
+            elif current_i < avg * 0.7:
                 status = "剛結束釋放"
-                action = "不建議進場"
-                range_text = f"等待至 {int(avg)} 轉以上"
             else:
                 status = "訊號累積中"
-                action = "建議低本測試"
-                range_text = f"{int(avg*0.6)} ~ {int(avg*0.9)} 轉"
 
             signal_chance = random.randint(60, 95)
             confidence = random.randint(80, 96)
 
-            # 🔒 免費版鎖（已修正白字）
+            # 🔒 免費版鎖
             lock_html = f"""
             <a href="{IG_LINK}" target="_blank" style="text-decoration:none; color:white;">
                 <div class="card step highlight">
@@ -85,11 +91,7 @@ def home():
 
                 <div class="card step small">
                     ⚠️ 熱點訊號通常不會維持太久<br>
-                    💡 建議低倍觀察，避免重壓
-                </div>
-
-                <div class="card step small">
-                    ※ 本系統僅供參考
+                    💡 建議低倍觀察
                 </div>
 
             </div>
@@ -192,10 +194,10 @@ def home():
     <div style="font-size:12px;color:gray;">※ 本系統僅供參考</div>
 
     <form method="post">
-        <input name="today" placeholder="今日得分率">
-        <input name="current" placeholder="未開轉數">
-        <input name="last1" placeholder="上次轉數">
-        <input name="last2" placeholder="上上次">
+        <input name="today" placeholder="今日得分率" value="{today}">
+        <input name="current" placeholder="未開轉數" value="{current}">
+        <input name="last1" placeholder="上次轉數" value="{last1}">
+        <input name="last2" placeholder="上上次" value="{last2}">
         <button type="submit">開始分析</button>
     </form>
 
