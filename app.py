@@ -10,16 +10,16 @@ IG_LINK = "https://www.instagram.com/gambler_168"
 def home():
     result = ""
     show_result = "none"
-
     today = ""
     current = ""
     last1 = ""
     last2 = ""
+    game = ""
 
     if request.method == "POST":
         show_result = "block"
-
         try:
+            game = request.form.get("game", "")
             today = request.form.get("today", "")
             current = request.form.get("current", "")
             last1 = request.form.get("last1", "")
@@ -55,7 +55,6 @@ def home():
                     🔒 操作建議（點我解鎖）
                 </div>
             </a>
-
             <a href="{IG_LINK}" target="_blank" style="text-decoration:none; color:white;">
                 <div class="card step">
                     🔒 建議區間（點我解鎖）
@@ -65,9 +64,12 @@ def home():
 
             result = f"""
             <div id="cards">
-
                 <div class="card step red">
                     📊 分析結果如下
+                </div>
+
+                <div class="card step">
+                    🎮 選擇遊戲：{game}
                 </div>
 
                 <div class="card step">
@@ -84,7 +86,6 @@ def home():
                 <div class="card step">
                     🤖 AI信心指數：{confidence}%
                 </div>
-
             </div>
             """
 
@@ -95,7 +96,6 @@ def home():
     <html>
     <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <style>
     body {{
         background:#0b0f1a;
@@ -111,7 +111,7 @@ def home():
         font-weight:bold;
     }}
 
-    input {{
+    input, select {{
         width:90%;
         padding:12px;
         margin:8px 0;
@@ -163,7 +163,6 @@ def home():
     <script>
     window.onload = function() {{
         let steps = document.querySelectorAll(".step");
-
         steps.forEach((el, i) => {{
             setTimeout(() => {{
                 el.classList.add("show");
@@ -171,7 +170,6 @@ def home():
         }});
     }}
     </script>
-
     </head>
 
     <body>
@@ -182,10 +180,18 @@ def home():
     </div>
 
     <form method="post">
+
+        <select name="game">
+            <option value="">選擇遊戲</option>
+            <option value="賽特" {"selected" if game=="賽特" else ""}>賽特</option>
+            <option value="赤三國" {"selected" if game=="赤三國" else ""}>赤三國</option>
+        </select>
+
         <input name="today" placeholder="今日得分率" value="{today}">
         <input name="current" placeholder="未開轉數" value="{current}">
         <input name="last1" placeholder="上次轉數" value="{last1}">
         <input name="last2" placeholder="上上次" value="{last2}">
+
         <button type="submit">開始分析</button>
     </form>
 
