@@ -1,10 +1,25 @@
 from flask import Flask, request
 import random
 import os
+import threading
+import time
+import requests
 
 app = Flask(__name__)
 
 IG_LINK = "https://www.instagram.com/gambler_168"
+
+# 🔥 Render 防睡眠（自ping）
+def keep_alive():
+    while True:
+        try:
+            requests.get("https://ai-hot-vip.onrender.com")
+            print("ping ok")
+        except:
+            print("ping fail")
+        time.sleep(300)  # 每5分鐘
+
+threading.Thread(target=keep_alive).start()
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -49,12 +64,14 @@ def home():
             signal_chance = random.randint(60, 95)
             confidence = random.randint(80, 96)
 
+            # 🔒 鎖區塊（點IG）
             lock_html = f"""
             <a href="{IG_LINK}" target="_blank" style="text-decoration:none; color:white;">
                 <div class="card step highlight">
                     🔒 操作建議（點我解鎖）
                 </div>
             </a>
+
             <a href="{IG_LINK}" target="_blank" style="text-decoration:none; color:white;">
                 <div class="card step">
                     🔒 建議區間（點我解鎖）
@@ -173,14 +190,13 @@ def home():
     </head>
 
     <body>
-
     <div class="title">⚡ 熱點雷達</div>
+
     <div style="font-size:12px;color:gray;">
         ※ 本系統為AI模型推估，結果僅供參考
     </div>
 
     <form method="post">
-
         <select name="game">
             <option value="">選擇遊戲</option>
             <option value="賽特" {"selected" if game=="賽特" else ""}>賽特</option>
