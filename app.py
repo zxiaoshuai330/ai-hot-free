@@ -7,7 +7,7 @@ import requests
 
 app = Flask(__name__)
 
-IG_LINK = "https://www.instagram.com/gambler_168"
+IG_LINK = "https://www.instagram.com/uu___178/"
 
 # 🔥 Render 防睡眠（自ping）
 def keep_alive():
